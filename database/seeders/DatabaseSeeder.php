@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         \App\Models\User::factory(10)->create();
-        $categories = ["IT", "News", "Food & Drinks", "Travel"];
+
 
         \App\Models\User::factory()->create([
             'name' => 'Admin',
@@ -27,14 +27,10 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('123123123'),
         ]);
 
-        foreach($categories as $category){
-            Category::factory()->create([
-                "title" => $category,
-                "slug" => Str::slug($category),
-                "user_id" => User::inRandomOrder()->first()->id
-            ]);
-        }
+        $this->call([
+            CategorySeeder::class,
+            PostSeeder::class,
+        ]);
 
-        Post::factory(250)->create();
     }
 }

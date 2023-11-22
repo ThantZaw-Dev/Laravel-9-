@@ -29,8 +29,10 @@ class PostFactory extends Factory
             'slug' => $slug,
             'description' => $description,
             'excerpt' => Str::words($description,50,"..."),
-            'user_id' => User::inRandomOrder()->first()->id,
-            'category_id' => Category::inRandomOrder()->first()->id,
+            'user_id' => rand(1,11),
+            // 'user_id' => User::inRandomOrder()->first()->id,
+            'category_id' => rand(1,4),
+            // 'category_id' => Category::inRandomOrder()->first()->id,
         ];
     }
 }
