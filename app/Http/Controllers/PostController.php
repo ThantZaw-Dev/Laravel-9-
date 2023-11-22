@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -15,7 +18,12 @@ class PostController extends Controller
      */
     public function index()
     {
-        //
+        $posts = Post::when(request('keyword'),function($q){
+            $q->where('title','like','%'.request('keyword').'%')
+               ->orWhere('description','like','%'.request('keyword'). "%");
+        
+        })->latest("id")->paginate(10)->withQueryString();
+        return view('posts.index', compact('posts'));
     }
 
     /**
@@ -25,7 +33,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -36,7 +44,24 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
+
+        $post = new Post();
+        $post->title = $request->title;
+        $post->slug = Str::slug($request->title);
+        $post->description = $request->description;
+        $post->excerpt = Str::words($request->description, 50, "....");
+        $post->user_id = Auth::id();
+        $post->category_id = $request->category_id;
+        
+       if($request->hasFile('feacture_image')){
+          $newName = uniqid() . $request->feacture_image->getClientOriginalName();
+          $request->file('feacture_image')->storeAs("public",$newName);
+          $post->feacture_image = $newName;
+       }
+
+       $post->save();
+
+       return to_route('posts.index')->with('status', $post->title . ' was created successufully');
     }
 
     /**
@@ -47,7 +72,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('posts.show', compact('post'));
     }
 
     /**
@@ -58,7 +83,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -70,7 +95,24 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        //
+        $post->title = $request->title;
+        $post->slug = Str::slug($request->title);
+        $post->description = $request->description;
+        $post->excerpt = Str::words($request->description, 50, "....");
+        $post->user_id = Auth::id();
+        $post->category_id = $request->category_id;
+        
+       if($request->hasFile('feacture_image')){
+          Storage::delete('public/' . $post->feacture_image);
+
+          $newName = uniqid() . $request->feacture_image->getClientOriginalName();
+          $request->file('feacture_image')->storeAs("public",$newName);
+          $post->feacture_image = $newName;
+       }
+
+       $post->save();
+
+       return to_route('posts.index')->with('status', $post->title . ' was updated successufully');
     }
 
     /**
@@ -81,6 +123,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        if(isset($post->feacture_image)){
+            Storage::delete('public/' . $post->feacture_image);
+        }
+        $post->delete();
+        return to_route('posts.index')->with('status', $post->title . ' was deleted successufully');
     }
 }

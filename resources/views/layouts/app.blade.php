@@ -17,6 +17,8 @@
 
     <!-- Scripts -->
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
+
+    @stack('style')
 </head>
 <body>
     <div id="app">
@@ -74,10 +76,31 @@
             </div>
         </nav>
 
-        <main class="py-4">
-            @yield('content')
+        <main class="py-3">
+            @auth
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4">
+                        @include('layouts.sidebar')
+                    </div>
+                    <div class="col-lg-8">
+                        @yield('content')
+                    </div>
+                </div>
+            </div>
+            @endauth
+            @guest
+              @yield('content')
+            @endguest
+           
         </main>
     </div>
 </body>
 <script src="{{ asset('js/app.js') }}"></script>
+@stack('script')
+<script>
+    @if(session('status'))
+      showToast(`{{ session('status') }}`)
+    @endif
+ </script>
 </html>

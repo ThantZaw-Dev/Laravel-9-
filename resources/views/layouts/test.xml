@@ -1,0 +1,8 @@
+<?xml version = "1.0"?> 
+<contactinfo> 
+	<address category = "college"> 
+		<name>G4G</name> 
+		<College>Geeksforgeeks</College> 
+		<mobile>2345456767</mobile> 
+	</address> 
+</contactinfo> 
