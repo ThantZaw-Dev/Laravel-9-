@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
@@ -95,6 +96,9 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
+        if(Gate::denies('update', $post)){
+            return to_route('posts.index')->with('status', 'You are not authorized to update this post');
+        }
         $post->title = $request->title;
         $post->slug = Str::slug($request->title);
         $post->description = $request->description;
@@ -123,6 +127,10 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+
+        if (! Gate::allows('delete', $post)){
+            return to_route('posts.index')->with('status', 'You are not authorized to delete this post');
+        }
         if(isset($post->feacture_image)){
             Storage::delete('public/' . $post->feacture_image);
         }

@@ -26,3 +26,13 @@
         Create Category
     </a>
 </div>
+
+<p class="small text-black-50">Manage Users</p>
+<div class="list-group mb-3">
+    <a href="{{ route('users.index') }}" class="list-group-item list-group-item-action">
+        User Lists
+    </a>
+    <a href="{{ route('users.create') }}" class="list-group-item list-group-item-action">
+        Create User
+    </a>
+</div>

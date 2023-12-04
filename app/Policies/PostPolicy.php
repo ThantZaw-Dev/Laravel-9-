@@ -41,7 +41,7 @@ class PostPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->is_admin;  // 管理者のみ投稿を許可する。
     }
 
     /**
@@ -53,7 +53,7 @@ class PostPolicy
      */
     public function update(User $user, Post $post)
     {
-        //
+        return $user->id === $post->user_id;  // 一般的なユーザーの更新は許可しないようにする。
     }
 
     /**
@@ -65,7 +65,7 @@ class PostPolicy
      */
     public function delete(User $user, Post $post)
     {
-        //
+        return $user->id === $post->user_id;  // 一般的なユーザーの削除は許可しないようにする。
     }
 
     /**

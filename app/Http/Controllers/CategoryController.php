@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+
 
 class CategoryController extends Controller
 {
@@ -78,6 +80,8 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
+        Gate::authorize('update', $category);
+
         $category->title = $request->title;
         $category->slug = Str::slug($request->title);
         // $category->user_id = auth()->user()->id;
