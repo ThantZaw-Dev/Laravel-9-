@@ -23,13 +23,14 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/test', [App\Http\Controllers\HomeController::class, 'test'])->name('test');
+// Route::get('/test', [App\Http\Controllers\HomeController::class, 'test'])->name('test');
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('/category', CategoryController::class)->except('show');
     Route::resource('/posts', PostController::class);
-    Route::resource('/users', App\Http\Controllers\UserController::class);
+    Route::resource('/users', App\Http\Controllers\UserController::class)->middleware('isAdmin');
 });
 
+Route::get("/test", [App\Http\Controllers\TestController::class,'index'])->name("test");
 
 

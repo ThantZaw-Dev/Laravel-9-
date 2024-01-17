@@ -7,12 +7,26 @@
         </ol>
     </nav>
     <div class="card">
-       
         <div class="card-header">
             <h1>Testing</h1>
         </div>
         <div class="card-body">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque suscipit ab, incidunt architecto adipisci necessitatibus fugiat dolores perferendis. Sapiente fugit itaque eos. Sapiente assumenda eos porro expedita recusandae qui hic?</p>
+           @foreach ($subCategories as $sub_category)
+               <p>{{ $sub_category['name'] }}</p>
+               <div class="mb-3">
+                <label for="category" class="form-label">Select Category</label>
+                <select type="text" name="category_id" id="category" class="form-select @error('category')
+                    is-invalid
+                @enderror">
+                @php
+                    $arr = [$sub_category['eng'], $sub_category['myn']];
+                @endphp
+                    @foreach ($arr as $category)
+                        <option value="{{ $category }}">{{ $category }}</option>
+                    @endforeach
+                </select>
+            </div>
+           @endforeach
         </div>
         
     </div>

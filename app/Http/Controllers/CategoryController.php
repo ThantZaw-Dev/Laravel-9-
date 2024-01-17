@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
@@ -18,7 +19,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::latest("id")->paginate(10);
+        $categories = Category::latest("id")
+                      ->when(Auth::user()->isAuthor(), fn($q) => $q->where("user_id", Auth::id()))
+                      ->get();
         return view('category.index', compact('categories'));
     }
 
@@ -68,6 +71,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        Gate::authorize('update', $category);
         return view('category.edit', compact('category'));
     }
 

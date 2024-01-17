@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -21,5 +20,4 @@
             {{ Auth::user()->name }}
         </div>
     </div>
-
 @endsection

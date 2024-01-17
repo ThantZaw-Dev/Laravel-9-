@@ -12,6 +12,7 @@ use App\Http\Requests\UpdatePostRequest;
 
 class PostController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +24,9 @@ class PostController extends Controller
             $q->where('title','like','%'.request('keyword').'%')
                ->orWhere('description','like','%'.request('keyword'). "%");
         
-        })->latest("id")->paginate(10)->withQueryString();
+        })
+        ->when(Auth::user()->isAuthor(), fn($q) => $q->where("user_id",Auth::id()))
+        ->latest("id")->paginate(10)->withQueryString();
         return view('posts.index', compact('posts'));
     }
 
@@ -73,6 +76,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
+        Gate::authorize('update',$post);
         return view('posts.show', compact('post'));
     }
 
@@ -84,6 +88,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        Gate::authorize('update',$post);
         return view('posts.edit', compact('post'));
     }
 

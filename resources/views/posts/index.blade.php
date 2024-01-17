@@ -27,7 +27,6 @@
                         Search
                     </button>
                 </div>
-                
             </form>
          </div>
          <table class="table">
@@ -36,7 +35,9 @@
                      <th>#</th>
                      <th class="w-25">Title</th>
                      <th>Category</th>
-                     <th>Owner</th>
+                     @if(Auth::user()->role != 'author')
+                        <th>Owner</th>
+                     @endif
                      <th>Control</th>
                      <th>Created</th>
                  </tr>
@@ -52,16 +53,23 @@
                             @inject('category', "App\Models\Category")
                             {{ $category::find($post->category_id)->title }}
                          </td>
-                         <td>
-                            {{ App\Models\User::find($post->user_id)->name }}
-                         </td>
+
+                           @notAuthor
+                            <td>
+                              {{ App\Models\User::find($post->user_id)->name }}
+                           </td>
+                           @endnotAuthor
+                        
+                            {{-- @if(Auth::user()->role != 'author')
+  
+                            @endif --}}
+                        
                          <td>
                             @can('update', $post)
                             <a href="{{ route('posts.edit', $post->id )}}" class="btn btn-outline-dark btn-sm">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             @endcan
-
                             <a href="{{ route('posts.show', $post->id )}}" class="btn btn-outline-dark btn-sm">
                                 <i class="bi bi-eye"></i>
                             </a>
